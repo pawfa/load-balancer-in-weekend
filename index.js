@@ -10,21 +10,19 @@ function getRandomServerNo() {
     return Math.floor(Math.random() * 3);
 }
 
-app.get('/', (req, res) => {
-    const randomServerPort = serversPoolPorts[getRandomServerNo()]
+app.get('*', (req, res) => {
+    console.log("Load balancer received request: ",req.method, req.url )
+
     const agent = req.protocol === 'http'? http : https
-    console.log("Received request")
     agent.request({
-        port: randomServerPort,
+        port: serversPoolPorts[getRandomServerNo()],
         hostname: 'localhost',
         path: "/",
         method: "GET",
-        protocol: "http:"
+        protocol: "http:",
     }, (targetRes)=> {
-        console.log('response from target')
-        res.send('Hello World!')
-    }).on('error', (e) => {
-        console.error(e);
+        console.log('Response from one of the servers.')
+        targetRes.pipe(res)
     }).end();
 })
 
