@@ -17,11 +17,12 @@ app.get('*', (req, res) => {
     agent.request({
         port: serversPoolPorts[getRandomServerNo()],
         hostname: 'localhost',
-        path: "/",
-        method: "GET",
-        protocol: "http:",
+        path: req.path,
+        method: req.method,
+        protocol: req.protocol+":"
     }, (targetRes)=> {
-        console.log('Response from one of the servers.')
+        console.log('Passing response to a client.')
+        res.writeHead(targetRes.statusCode, targetRes.headers)
         targetRes.pipe(res)
     }).end();
 })
