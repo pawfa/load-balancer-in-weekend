@@ -10,12 +10,25 @@ function getRandomServerNo() {
     return Math.floor(Math.random() * 3);
 }
 
+function getServerNum() {
+    return roundRobinAlgorithm()
+}
+
+let i = 0;
+function roundRobinAlgorithm() {
+    const serversCount = serversPoolPorts.length;
+    const currentServerNo = i % serversCount;
+    i++
+    return currentServerNo
+
+}
+
 app.get('*', (req, res) => {
     console.log("Load balancer received request: ",req.method, req.url )
 
     const agent = req.protocol === 'http'? http : https
     agent.request({
-        port: serversPoolPorts[getRandomServerNo()],
+        port: serversPoolPorts[getServerNum()],
         hostname: 'localhost',
         path: req.path,
         method: req.method,
