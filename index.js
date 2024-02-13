@@ -4,7 +4,7 @@ const port = 3000
 const https = require("node:https")
 const http = require("node:http")
 
-const serversPoolPorts = [4000,4001,4002]
+let serversPoolPorts = [4000,4001,4002]
 
 function getRandomServerNo() {
     return Math.floor(Math.random() * 3);
@@ -20,9 +20,21 @@ function roundRobinAlgorithm() {
     const currentServerNo = i % serversCount;
     i++
     return currentServerNo
-
 }
 
+setInterval(()=> {
+
+    for (const serverPort of serversPoolPorts) {
+        http.get(`http://localhost:${serverPort}/health`, (res)=> {
+            const { statusCode } = res;
+            if (statusCode !== 200) {
+                console.log(`Health check failed for server under port ${serverPort} - Removing from pool of available servers.`)
+                serversPoolPorts = serversPoolPorts.filter((port)=> port === serverPort)
+            }
+        })
+    }
+
+}, 5000)
 app.get('*', (req, res) => {
     console.log("Load balancer received request: ",req.method, req.url )
 
