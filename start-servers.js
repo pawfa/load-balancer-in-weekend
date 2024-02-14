@@ -2,15 +2,15 @@ const express = require('express')
 const app = express()
 const port = 4000
 
-// app.get('/health', (req, res) => {
-//     res.send('OK')
-// })
-//
-// app.get('*', (req, res) => {
-//     console.log(`Sending response from Server 1`)
-//     res.setHeader('X-Response-From', '1')
-//     res.send('Hello World1!')
-// })
+app.get('/health', (req, res) => {
+    res.send('OK')
+})
+
+app.get('*', (req, res) => {
+    console.log(`Sending response from Server 1`)
+    res.setHeader('X-Response-From', '1')
+    res.send('Hello World1!')
+})
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
